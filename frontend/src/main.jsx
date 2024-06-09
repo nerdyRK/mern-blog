@@ -7,6 +7,9 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import About from "./pages/About.jsx";
 import Blog from "./pages/Blog.jsx";
+import AllRecommendedBlogs from "./components/AllRecommendedBlogs.jsx";
+import AllRecentBlogs from "./components/AllRecentBlogs.jsx";
+import AllTrendingBlogs from "./components/AllTrendingBlogs.jsx";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +19,19 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+
+      {
+        path: "/recommended",
+        element: <AllRecommendedBlogs />,
+      },
+      {
+        path: "/trending",
+        element: <AllTrendingBlogs />,
+      },
+      {
+        path: "/recent",
+        element: <AllRecentBlogs />,
       },
 
       {

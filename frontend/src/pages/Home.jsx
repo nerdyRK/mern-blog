@@ -6,9 +6,9 @@ import blogData from "../services/blogData";
 const Home = () => {
   return (
     <div className="py-10">
-      <Recommended data={blogData} />
-      <Trendingblogs data={blogData} />
-      <RecentBlogs data={blogData} />
+      <Recommended data={blogData.slice(0, 3)} />
+      <Trendingblogs data={blogData.slice(0, 3)} />
+      <RecentBlogs data={blogData.slice(0, 3)} />
     </div>
   );
 };

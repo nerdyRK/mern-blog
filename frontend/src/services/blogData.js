@@ -15,6 +15,12 @@ const data=[ {
     title: "Title 3",
     content: "Content 3",
     image: "image3.jpg",
+  },
+  {
+    id: 4,
+    title: "Title 4",
+    content: "Content 4",
+    image: "image4.jpg",
   }]
 
   export default data

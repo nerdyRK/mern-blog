@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import BlogSection from "./BlogSection";
+import data from "../services/blogData";
 
-const RecommendedBlogs = ({ data }) => {
+const AllRecommendedBlogs = () => {
   //* this data will be fetched from DB
   const [blogs, setBlogs] = useState(data);
 
@@ -14,4 +15,4 @@ const RecommendedBlogs = ({ data }) => {
   );
 };
 
-export default RecommendedBlogs;
+export default AllRecommendedBlogs;
