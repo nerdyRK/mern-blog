@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/authReducer";
+
 const Navbar = () => {
   const [showLinks, setShowLinks] = useState(false);
   // console.log(showLinks);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const dispatch = useDispatch();
+
+  const handleClick = () => {
+    dispatch(logout());
+  };
 
   return (
     <nav className="sm:flex overflow-hidden relative block text-center justify-between sm:p-10 p-6 shadow-lg">
@@ -17,7 +26,9 @@ const Navbar = () => {
       <ul className={`sm:flex gap-6 hidden`}>
         <NavLink to="/">Home</NavLink>
         <NavLink to="/about">About</NavLink>
-        <NavLink to="/login">Login</NavLink>
+        <NavLink onClick={handleClick} to="/login">
+          {isLoggedIn ? "Logout" : "Login"}
+        </NavLink>
       </ul>
 
       <ul
@@ -27,7 +38,9 @@ const Navbar = () => {
       >
         <NavLink to="/">Home</NavLink>
         <NavLink to="/about">About</NavLink>
-        <NavLink to="/login">Login</NavLink>
+        <NavLink onClick={handleClick} to="/login">
+          {isLoggedIn ? "Logout" : "Login"}
+        </NavLink>
       </ul>
     </nav>
   );
