@@ -6,7 +6,7 @@ const Dashboard = () => {
   const Navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   useEffect(() => {
-    if (isLoggedIn) {
+    if (!isLoggedIn) {
       Navigate("/login");
     }
   });

@@ -20,7 +20,7 @@ const LoginForm = () => {
     if (isLoggedIn) {
       navigate("/dashboard");
     }
-  }, [isLoggedIn]);
+  });
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];

@@ -11,6 +11,7 @@ const AllRecommendedBlogs = () => {
       linkTo="/recommended"
       title="Recommended for you"
       blogs={blogs}
+      showAll={false}
     />
   );
 };

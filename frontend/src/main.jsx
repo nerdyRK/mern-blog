@@ -11,6 +11,7 @@ import AllRecommendedBlogs from "./components/AllRecommendedBlogs.jsx";
 import AllRecentBlogs from "./components/AllRecentBlogs.jsx";
 import AllTrendingBlogs from "./components/AllTrendingBlogs.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import SearchResults from "./components/SearchResults.jsx";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,8 @@ const router = createBrowserRouter([
         path: "/trending",
         element: <AllTrendingBlogs />,
       },
+      { path: "/search", element: <SearchResults /> },
+
       {
         path: "/recent",
         element: <AllRecentBlogs />,

@@ -7,7 +7,7 @@ const AllRecentBlogs = () => {
   const [blogs, setBlogs] = useState(data);
 
   return (
-    <BlogSection linkTo="/recent" title="Recently Uploaded" blogs={blogs} />
+    <BlogSection linkTo="/recent" showAll={false} title="Recently Uploaded" blogs={blogs} />
   );
 };
 

@@ -7,7 +7,12 @@ const AllTrendingBlogs = () => {
   const [blogs, setBlogs] = useState(data);
 
   return (
-    <BlogSection linkTo="/trending" title="Trending blogs" blogs={blogs} />
+    <BlogSection
+      showAll={false}
+      linkTo="/trending"
+      title="Trending blogs"
+      blogs={blogs}
+    />
   );
 };
 
