@@ -32,8 +32,11 @@ const authSlice = createSlice({
     updateProfile: (state, action) => {
       state.user = { ...state.user, ...action.payload };
     },
+    deleteAccount: (state) => {
+      state.isLoggedIn = false;
+      state.user = null; },
   },
 });
 
-export const { login, logout, updateProfile } = authSlice.actions;
+export const { login, logout, updateProfile ,deleteAccount} = authSlice.actions;
 export default authSlice.reducer;

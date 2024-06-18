@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-// import { deleteAccount } from "../store/authReducer";
+import { deleteAccount } from "../store/authReducer";
 import { useNavigate } from "react-router-dom";
 
 const DeleteAccount = () => {
@@ -8,7 +8,7 @@ const DeleteAccount = () => {
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    // dispatch(deleteAccount());
+    dispatch(deleteAccount());
     navigate("/login");
   };
 

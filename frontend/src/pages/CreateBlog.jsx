@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-// import { createBlog } from "../store/blogReducer";
+import { addBlog } from "../store/blogReducer";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
@@ -9,7 +9,9 @@ const CreateBlog = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // dispatch(createBlog({ title, content }));
+    dispatch(addBlog({ title, content }));
+    setTitle("");
+    setContent("");
   };
 
   return (
