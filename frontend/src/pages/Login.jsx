@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authReducer";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -13,14 +14,13 @@ const LoginForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
     if (isLoggedIn) {
       navigate("/dashboard");
     }
-  });
+  }, [isLoggedIn, navigate]);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -34,14 +34,34 @@ const LoginForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
     if (photo) {
-      console.log("Photo:", photo.name);
+      formData.append("photo", photo);
     }
-    dispatch(login());
+
+    try {
+      let response;
+      if (isSignUp) {
+        response = await axios.post("/auth/signup", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await axios.post("/auth/login", { email, password });
+      }
+
+      // Handle successful login/signup
+      dispatch(login()); // Dispatch login action to update Redux store
+
+      navigate("/dashboard"); // Redirect to dashboard after successful login/signup
+    } catch (error) {
+      console.error("Error:", error.response.data.message);
+      // Handle error (e.g., show error message to user)
+    }
   };
 
   return (
