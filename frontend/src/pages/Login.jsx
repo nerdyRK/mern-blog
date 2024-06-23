@@ -41,7 +41,7 @@ const LoginForm = () => {
     formData.append("email", email);
     formData.append("password", password);
     if (photo) {
-      formData.append("photo", photo);
+      formData.append("profileImage", photo);
     }
 
     try {

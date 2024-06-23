@@ -2,6 +2,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import uploadToCloudinary from "../utils/cloudinary.js";
 
 // Generate JWT token
 const generateToken = (user) => {
@@ -18,12 +19,21 @@ export const signup = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
+
+    let profileImage = "";
+    // console.log(req.file);
+    if (req.file) {
+      const localFilePath = req.file.path;
+      profileImage = await uploadToCloudinary(localFilePath);
+      console.log(profileImage);
+    }
+
     // Create new user
     const user = new User({
       name,
       email,
       password,
-      photo,
+      profileImage,
     });
     // Save user to database
     await user.save();
@@ -42,7 +52,7 @@ export const signup = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      photo: user.photo,
+      profileImage: user.profileImage,
       role: user.role,
       token: token,
     });
