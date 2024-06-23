@@ -42,7 +42,7 @@ export const signup = async (req, res) => {
     // Set the token in an HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === 'production', // use secure cookies in production
+      secure: true, // use secure cookies in production
       sameSite: "strict",
       maxAge: 1 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -80,7 +80,7 @@ export const login = async (req, res) => {
     const token = generateToken(user);
     res.cookie("token", token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === 'production', // use secure cookies in production
+      secure: true,
       sameSite: "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -99,4 +99,14 @@ export const login = async (req, res) => {
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
+};
+
+export const logout = (_, res) => {
+  res
+    .cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+    })
+    .status(200)
+    .json({ message: "Logged out successfully" });
 };

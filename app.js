@@ -4,7 +4,7 @@ import "express-async-errors";
 import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
-import authRoute from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -12,7 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
+import authRoute from "./routes/auth.route.js";
 app.use("/auth", authRoute);
 
 // Database Connection
