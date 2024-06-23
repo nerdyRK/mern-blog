@@ -17,6 +17,9 @@ app.use(cookieParser());
 import authRoute from "./routes/auth.route.js";
 app.use("/auth", authRoute);
 
+import blogRoute from "./routes/blog.route.js";
+app.use("/blog", blogRoute);
+
 // Database Connection
 connectDB();
 
