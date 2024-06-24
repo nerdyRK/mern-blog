@@ -38,7 +38,7 @@ const checkRights = (resourceType) => {
           .status(403)
           .json({ message: "Not authorized to perform this action" });
       }
-
+      console.log("checked rights");
       next();
     } catch (error) {
       res.status(500).json({ message: "Server error", error: error.message });

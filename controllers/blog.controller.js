@@ -31,7 +31,7 @@ export const getAllBlogs = async (_, res) => {
   const blogs = await Blog.find()
     .populate("author", "name")
     .populate("comments");
-  console.log("dcdcd", blogs);
+  // console.log("dcdcd", blogs);
   const blogsWithLikeCount = blogs.map((blog) => ({
     ...blog.toObject(),
     likeCount: blog.likes.length,
