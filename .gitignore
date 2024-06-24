@@ -1,4 +1,5 @@
 .env
+.todo
 # Logs
 logs
 *.log

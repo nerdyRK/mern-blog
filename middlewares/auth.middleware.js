@@ -10,6 +10,7 @@ export const verifyJWT = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+    console.log("completed verification");
     next();
   } catch (error) {
     res.status(401).json({ message: "Not authorized, token failed" });

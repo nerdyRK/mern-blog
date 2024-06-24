@@ -15,10 +15,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 import authRoute from "./routes/auth.route.js";
+import blogRoute from "./routes/blog.route.js";
+import commentRoute from "./routes/comment.route.js";
 app.use("/auth", authRoute);
 
-import blogRoute from "./routes/blog.route.js";
 app.use("/blog", blogRoute);
+
+app.use("/comment", commentRoute);
 
 // Database Connection
 connectDB();
