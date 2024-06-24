@@ -7,11 +7,10 @@ import {
   updateBlog,
   deleteBlog,
 } from "../controllers/blog.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
-import multer from "multer";
 
-// Configure multer for file uploads
-const upload = multer({ dest: "uploads/" });
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
+import checkRights from "../middlewares/checkRights.middleware.js";
 
 const router = express.Router();
 
@@ -19,7 +18,15 @@ router.post("/", verifyJWT, upload.single("blogImage"), createBlog);
 router.get("/", getAllBlogs);
 router.get("/category/:category", getBlogsByCategory);
 router.get("/user/:userId", getBlogsByUser);
-router.put("/:id", verifyJWT, upload.single("blogImage"), updateBlog);
-router.delete("/:id", verifyJWT, deleteBlog);
+
+router.patch(
+  "/:id",
+  verifyJWT,
+  checkRights("blog"),
+  upload.single("blogImage"),
+  updateBlog
+);
+
+router.delete("/:id", verifyJWT, checkRights("blog"), deleteBlog);
 
 export default router;

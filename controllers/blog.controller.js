@@ -2,14 +2,12 @@ import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 import Comment from "../models/comment.model.js";
 import uploadToCloudinary from "../utils/cloudinary.js";
-import fs from "fs";
 
 // Create a new blog
 export const createBlog = async (req, res) => {
-  const { title, content, category } = req.body;
-  //   console.log("nn", req.user);
-  const author = req.user;
-
+  let { title, content, category } = req.body;
+  category = category.toLowerCase();
+  const author = req.user.id;
   let blogImage = "";
   if (req.file) {
     blogImage = await uploadToCloudinary(req.file.path);
@@ -22,12 +20,9 @@ export const createBlog = async (req, res) => {
     category,
     blogImage,
   });
-
   const savedBlog = await newBlog.save();
-
   // Update user blogs
   await User.findByIdAndUpdate(author, { $push: { blogs: savedBlog._id } });
-
   res.status(201).json(savedBlog);
 };
 
@@ -73,11 +68,10 @@ export const updateBlog = async (req, res) => {
   const { title, content, category } = req.body;
 
   let blogImage = "";
+  console.log("image", req.file);
   if (req.file) {
     blogImage = await uploadToCloudinary(req.file.path);
-    fs.unlinkSync(req.file.path);
   }
-
   const updatedBlog = await Blog.findByIdAndUpdate(
     blogId,
     { title, content, category, blogImage: blogImage },
@@ -96,7 +90,6 @@ export const updateBlog = async (req, res) => {
 export const deleteBlog = async (req, res) => {
   const blogId = req.params.id;
   const blog = await Blog.findByIdAndDelete(blogId);
-
   // Remove blog from user's blog list
   await User.findByIdAndUpdate(blog.author, { $pull: { blogs: blogId } });
 

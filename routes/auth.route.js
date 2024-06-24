@@ -7,6 +7,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 router.post("/signup", upload.single("profileImage"), signup);
 router.post("/login", login);
+//should i use check right middleware
 router.post("/logout", verifyJWT, logout);
 
 export default router;
