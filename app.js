@@ -5,6 +5,8 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -23,13 +25,21 @@ app.use("/blog", blogRoute);
 
 app.use("/comment", commentRoute);
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+app.use(express.static(path.join(__dirname, "./frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./frontend/dist", "index.html"));
+});
+
 // Database Connection
 connectDB();
 
 // Routes
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+// app.get("/", (req, res) => {
+//   res.send("API is running...");
+// });
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
