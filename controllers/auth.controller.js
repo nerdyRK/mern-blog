@@ -13,7 +13,7 @@ const generateToken = (user) => {
 
 // Signup Controller
 export const signup = async (req, res) => {
-  const { name, email, password, photo } = req.body;
+  const { name, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -90,7 +90,7 @@ export const login = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      photo: user.profileImage,
+      profileImage: user.profileImage,
       role: user.role,
       token: token,
     });
@@ -109,4 +109,30 @@ export const logout = (_, res) => {
     })
     .status(200)
     .json({ message: "Logged out successfully" });
+};
+
+// Update profile
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email } = req.body;
+    let profileImage = "";
+    if (req.file) {
+      const localFilePath = req.file.path;
+      profileImage = await uploadToCloudinary(localFilePath);
+      // console.log(profileImage);
+    }
+
+    const updatedData = { name, email };
+    if (profileImage) updatedData.profileImage = profileImage;
+
+    const user = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Error updating profile" });
+  }
 };

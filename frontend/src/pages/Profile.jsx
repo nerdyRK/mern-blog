@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateProfile } from "../store/authReducer";
 import axios from "axios";
+import defaultUserImage from "../assets/defaultUserImage.png";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -10,34 +11,34 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [photo, setPhoto] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const [password, setPassword] = useState(""); // For updating password
 
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
-      setPhoto(user.photo);
+      setProfileImage(user.profileImage);
     }
   }, [user]);
 
   const handlePhotoChange = (e) => {
-    setPhoto(e.target.files[0]);
+    setProfileImage(e.target.files[0]);
   };
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    const updatedUser = { name, email, photo };
+    const updatedUser = { name, email, profileImage };
 
     // Update user profile on the server
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
-    if (photo) formData.append("photo", photo);
+    if (profileImage) formData.append("profileImage", profileImage);
 
     try {
       const response = await axios.put(
-        "http://localhost:5000/user/profile",
+        "http://localhost:5000/auth/profile",
         formData,
         {
           headers: {
@@ -112,7 +113,7 @@ const Profile = () => {
             disabled={!editMode}
           />
           <img
-            src={photo}
+            src={profileImage || defaultUserImage}
             className="w-20 h-20 bg-slate-500 bg-opacity-40 mt-4"
             alt=""
           />

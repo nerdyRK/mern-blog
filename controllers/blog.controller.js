@@ -97,3 +97,33 @@ export const deleteBlog = async (req, res) => {
 
   res.status(200).json({ message: "Blog deleted" });
 };
+
+export const getRecentBlogs = async (req, res) => {
+  const limit = parseInt(req.query.limit) || 10;
+  const recentBlogs = await Blog.find()
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .exec();
+  res.json(recentBlogs);
+};
+
+export const getTrendingBlogs = async (req, res) => {
+  const limit = parseInt(req.query.limit) || 10;
+  const trendingBlogs = await Blog.find()
+    .sort({ likes: -1 })
+    .limit(limit)
+    .exec();
+  res.json(trendingBlogs);
+};
+
+export const getBlogById = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+    res.status(200).json(blog);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};

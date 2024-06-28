@@ -1,28 +1,49 @@
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import data from "../services/blogData";
+import axios from "axios";
+import defaultBlogImage from "../assets/defaultBlogImage.avif";
 
 const Blog = () => {
   const { id } = useParams();
-  const blog = data.find((blog) => blog.id == id);
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!blog) {
-    return <div>Blog not found</div>;
-  }
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/blog/${id}`);
+        setBlog(response.data);
+      } catch (error) {
+        setError("Error fetching blog");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlog();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
-    <div className=" w-4/5 mx-auto my-10 p-10 flex flex-col gap-y-6 shadow-lg border-black border">
-      <h1>{blog.title}</h1>
-      <img className="w-full h-40 bg-slate-500 bg-opacity-40" src="" alt="" />
-
-      <p className="">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum
-        recusandae magni exercitationem officia maiores laborum, unde
-        repellendus quam velit aspernatur veniam expedita veritatis aliquam
-        neque sequi modi, dolorem natus aliquid sed quidem beatae excepturi
-        officiis quasi. Officiis magni, perspiciatis dolorem, sunt beatae
-        eveniet a veritatis voluptate voluptatibus accusantium molestias
-        commodi.
-      </p>
+    <div>
+      {blog ? (
+        <div className="max-w-[1000px] mx-auto border-2 border-black">
+          <h1 className="text-3xl text-center p-4">{blog.title}</h1>
+          <img
+            src={blog.blogImage || defaultBlogImage}
+            className="min-w-[80%] max-h-[400px] mx-auto object-cover"
+            alt=""
+          />
+          <p className="max-w-[80%] mx-auto p-4">{blog.content}</p>
+          {/* Display other blog details */}
+        </div>
+      ) : (
+        <p>Blog not found</p>
+      )}
     </div>
   );
 };
+
 export default Blog;

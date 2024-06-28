@@ -6,6 +6,9 @@ import {
   getBlogsByUser,
   updateBlog,
   deleteBlog,
+  getRecentBlogs,
+  getTrendingBlogs,
+  getBlogById,
 } from "../controllers/blog.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -16,6 +19,10 @@ const router = express.Router();
 
 router.post("/", verifyJWT, upload.single("blogImage"), createBlog);
 router.get("/", getAllBlogs);
+router.get("/recent", getRecentBlogs);
+router.get("/trending", getTrendingBlogs);
+router.get("/:id", getBlogById);
+
 router.get("/category/:category", getBlogsByCategory);
 router.get("/user/:userId", getBlogsByUser);
 
