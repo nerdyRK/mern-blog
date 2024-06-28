@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const LoginForm = () => {
+  axios.defaults.withCredentials = true;
+
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -36,26 +38,41 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    if (photo) {
-      formData.append("profileImage", photo);
-    }
-
     try {
       let response;
       if (isSignUp) {
-        response = await axios.post("/auth/signup", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("password", password);
+        if (photo) {
+          formData.append("profileImage", photo);
+        }
+        response = await axios.post(
+          "http://localhost:5000/auth/signup",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
       } else {
-        response = await axios.post("/auth/login", { email, password });
+        response = await axios.post("http://localhost:5000/auth/login", {
+          email,
+          password,
+        });
       }
 
-      // Handle successful login/signup
-      dispatch(login()); // Dispatch login action to update Redux store
+      {
+        // console.log(response);
+        // const userData = {
+        //   name: response.data.name,
+        //   email: response.data.email,
+        //   photo: response.data.photo,
+        // };
+        // console.log(r);
+        // Handle successful login/signup
+      }
+      dispatch(login(response.data)); // Dispatch login action to update Redux store
 
       navigate("/dashboard"); // Redirect to dashboard after successful login/signup
     } catch (error) {

@@ -11,7 +11,12 @@ import { fileURLToPath } from "url";
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -27,11 +32,11 @@ app.use("/comment", commentRoute);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-app.use(express.static(path.join(__dirname, "./frontend/dist")));
+// app.use(express.static(path.join(__dirname, "./frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "./frontend/dist", "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "./frontend/dist", "index.html"));
+// });
 
 // Database Connection
 connectDB();

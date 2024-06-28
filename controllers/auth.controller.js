@@ -37,13 +37,11 @@ export const signup = async (req, res) => {
     });
     // Save user to database
     await user.save();
-    // Generate JWT token
     const token = generateToken(user);
-    // Set the token in an HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // use secure cookies in production
-      sameSite: "strict",
+      // secure: true, // use secure cookies in production
+      // sameSite: "strict",
       maxAge: 1 * 24 * 60 * 60 * 1000, // 30 days
     });
 
@@ -52,7 +50,7 @@ export const signup = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      profileImage: user.profileImage,
+      photo: user.profileImage,
       role: user.role,
       token: token,
     });
@@ -77,10 +75,13 @@ export const login = async (req, res) => {
     }
     // Generate JWT token
     const token = generateToken(user);
+    res.cookie("test", "test", {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      // secure: true,
+      // sameSite: "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 
@@ -89,7 +90,7 @@ export const login = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      photo: user.photo,
+      photo: user.profileImage,
       role: user.role,
       token: token,
     });

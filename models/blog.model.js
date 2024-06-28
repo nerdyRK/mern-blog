@@ -27,6 +27,7 @@ const blogSchema = new mongoose.Schema(
         "gaming",
         "travel",
       ],
+      default: "technology",
       required: true,
     },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

@@ -20,9 +20,11 @@ export const createBlog = async (req, res) => {
     category,
     blogImage,
   });
+
   const savedBlog = await newBlog.save();
   // Update user blogs
   await User.findByIdAndUpdate(author, { $push: { blogs: savedBlog._id } });
+  console.log(savedBlog);
   res.status(201).json(savedBlog);
 };
 
