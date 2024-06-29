@@ -76,6 +76,7 @@ const LoginForm = () => {
 
       navigate("/dashboard"); // Redirect to dashboard after successful login/signup
     } catch (error) {
+      alert(error.response.data.message);
       console.error("Error:", error.response.data.message);
       // Handle error (e.g., show error message to user)
     }

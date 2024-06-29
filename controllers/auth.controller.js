@@ -50,7 +50,7 @@ export const signup = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      photo: user.profileImage,
+      profileImage: user.profileImage,
       role: user.role,
       token: token,
     });

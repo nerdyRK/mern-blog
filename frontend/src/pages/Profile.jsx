@@ -112,6 +112,7 @@ const Profile = () => {
             className="w-full p-2 border border-black rounded"
             disabled={!editMode}
           />
+          {console.log(user)}
           <img
             src={profileImage || defaultUserImage}
             className="w-20 h-20 bg-slate-500 bg-opacity-40 mt-4"

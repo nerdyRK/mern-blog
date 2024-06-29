@@ -29,7 +29,7 @@ const Blog = () => {
   return (
     <div>
       {blog ? (
-        <div className="max-w-[1000px] mx-auto border-2 border-black">
+        <div className="max-w-[1000px] mt-3 mx-auto border-2 border-black">
           <h1 className="text-3xl text-center p-4">{blog.title}</h1>
           <img
             src={blog.blogImage || defaultBlogImage}

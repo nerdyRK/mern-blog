@@ -28,7 +28,7 @@ const blogSlice = createSlice({
     },
     filterByCategory: (state, action) => {
       // Add this
-      console.log(action.payload);
+      // console.log(action.payload);
       if (action.payload === "All") {
         state.filteredResults = state.searchResults;
       } else {

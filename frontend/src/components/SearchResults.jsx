@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import BlogCard from "../components/BlogCard";
-import { setSearchResults, filterByCategory } from "../store/blogReducer"; 
+import { setSearchResults, filterByCategory } from "../store/blogReducer";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -39,7 +39,7 @@ const SearchResults = () => {
   }
 
   return (
-    <div className="max-w-[1300px] mt-6 mx-auto">
+    <div className="max-w-[1300px] my-6  mx-auto">
       <h1 className="text-3xl mb-5">Search Results</h1>
       <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-full">
         {filteredResults.length > 0 ? (

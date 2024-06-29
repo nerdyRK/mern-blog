@@ -32,7 +32,7 @@ const SearchBar = () => {
 
   return (
     <div className="flex justify-end py-4 gap-8 px-10 shadow-lg items-center">
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <form onSubmit={handleSearch} className="flex">
         <input
           type="text"
           value={query}
