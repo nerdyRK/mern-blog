@@ -21,6 +21,22 @@ const blogSlice = createSlice({
       state.totalPages = totalPages;
       state.totalBlogs = totalBlogs;
     },
+    setSearchResults: (state, action) => {
+      // Add this
+      state.searchResults = action.payload;
+      state.filteredResults = action.payload;
+    },
+    filterByCategory: (state, action) => {
+      // Add this
+      console.log(action.payload);
+      if (action.payload === "All") {
+        state.filteredResults = state.searchResults;
+      } else {
+        state.filteredResults = state.searchResults.filter(
+          (blog) => blog.category === action.payload.toLowerCase()
+        );
+      }
+    },
     setTrendingBlogs: (state, action) => {
       state.trendingBlogs = action.payload;
     },
@@ -52,6 +68,8 @@ const blogSlice = createSlice({
 
 export const {
   setBlogs,
+  setSearchResults,
+  filterByCategory,
   setTrendingBlogs,
   setRecentBlogs,
   setRecommendedBlogs,

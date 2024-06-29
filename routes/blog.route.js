@@ -9,6 +9,7 @@ import {
   getRecentBlogs,
   getTrendingBlogs,
   getBlogById,
+  searchBlogs,
 } from "../controllers/blog.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -21,6 +22,7 @@ router.post("/", verifyJWT, upload.single("blogImage"), createBlog);
 router.get("/", getAllBlogs);
 router.get("/recent", getRecentBlogs);
 router.get("/trending", getTrendingBlogs);
+router.get("/search", searchBlogs);
 router.get("/:id", getBlogById);
 
 router.get("/category/:category", getBlogsByCategory);

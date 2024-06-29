@@ -127,3 +127,27 @@ export const getBlogById = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+export const searchBlogs = async (req, res) => {
+  const { q, category } = req.query;
+  let filter = {};
+
+  if (q) {
+    const regex = new RegExp(q, "i"); // Case-insensitive search
+
+    // Find authors matching the query
+    const authors = await User.find({ name: regex });
+    const authorIds = authors.map((author) => author._id);
+
+    // Filter blogs by title or author ID
+    filter.$or = [{ title: regex }, { author: { $in: authorIds } }];
+  }
+
+  if (category && category !== "All") {
+    filter.category = category.toLowerCase();
+  }
+
+  const blogs = await Blog.find(filter).populate("author", "name");
+
+  res.status(200).json(blogs);
+};

@@ -13,19 +13,30 @@ const Home = () => {
   const dispatch = useDispatch();
   const trendingBlogs = useSelector((state) => state.blogs.trendingBlogs);
   const recentBlogs = useSelector((state) => state.blogs.recentBlogs);
-  const recommendedBlogs = useSelector((state) => state.blogs.recentBlogs);
+  const recommendedBlogs = useSelector((state) => state.blogs.recommendedBlogs);
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(fetchTrendingBlogs());
-      await dispatch(fetchRecentBlogs());
-      await dispatch(fetchRecommendedBlogs());
+      if (!trendingBlogs.length) {
+        await dispatch(fetchTrendingBlogs());
+      }
+      if (!recentBlogs.length) {
+        await dispatch(fetchRecentBlogs());
+      }
+      if (!recommendedBlogs.length) {
+        await dispatch(fetchRecommendedBlogs());
+      }
       setLoading(false);
     };
     fetchData();
-  }, [dispatch]);
+  }, [
+    dispatch,
+    trendingBlogs.length,
+    recentBlogs.length,
+    recommendedBlogs.length,
+  ]);
 
   if (loading) {
     return <p>Loading...</p>;

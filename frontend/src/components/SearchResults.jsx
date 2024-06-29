@@ -1,43 +1,52 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import BlogCard from "./BlogCard";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import BlogCard from "../components/BlogCard";
+import { setSearchResults, filterByCategory } from "../store/blogReducer"; 
 
 const SearchResults = () => {
-  const [results, setResults] = useState([]);
   const location = useLocation();
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  const queryParams = new URLSearchParams(location.search);
-  const query = queryParams.get("q");
-  const category = queryParams.get("category");
+  const filteredResults = useSelector((state) => state.blogs.filteredResults);
 
   useEffect(() => {
-    if (!query && !category) {
-      navigate(-1);
-    } else {
-      const fetchSearchResults = async () => {
-        try {
-          const response = await axios.get(`/api/search`, {
-            params: { q: query, category: category },
-          });
-          setResults(response.data);
-        } catch (error) {
-          console.error("Error fetching search results", error);
-        }
-      };
-      fetchSearchResults();
-    }
-  }, [query, category, navigate, location]);
+    const fetchSearchResults = async () => {
+      const params = new URLSearchParams(location.search);
+      const query = params.get("q");
+      const category = params.get("category");
+
+      try {
+        const response = await axios.get("http://localhost:5000/blog/search", {
+          params: { q: query },
+        });
+        dispatch(setSearchResults(response.data)); // Store search results in Redux
+        dispatch(filterByCategory(category || "All")); // Filter by category
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchSearchResults();
+  }, [location.search, dispatch]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="max-w-[1300px] mt-6 mx-auto">
-      <h1 className="text-3xl mb-5">
-        Search Results for "{query}" in "{category}"
-      </h1>
+      <h1 className="text-3xl mb-5">Search Results</h1>
       <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-full">
-        {results.map((blog) => (
-          <BlogCard blog={blog} key={blog.id} />
-        ))}
+        {filteredResults.length > 0 ? (
+          filteredResults.map((blog) => <BlogCard blog={blog} key={blog._id} />)
+        ) : (
+          <p>No results found</p>
+        )}
       </div>
     </div>
   );

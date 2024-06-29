@@ -1,26 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import categories from "../utils/constants";
+import { filterByCategory } from "../store/blogReducer"; // Import the filter action
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSearch = (e) => {
     e.preventDefault();
     const searchQuery = query.trim();
     let searchURL = "/search";
-    console.log(searchQuery, category);
     if (searchQuery) {
       searchURL += `?q=${searchQuery}`;
     }
-    if (category) {
+    if (category && category !== "All") {
       searchURL += `${searchQuery ? "&" : "?"}category=${category}`;
     }
-    if (searchQuery || category) {
+    if (searchQuery || category !== "All") {
       navigate(searchURL);
     }
+  };
+
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+    dispatch(filterByCategory(e.target.value)); // Filter by category on client side
   };
 
   return (
@@ -31,7 +38,7 @@ const SearchBar = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="p-2 border rounded-l"
-          placeholder="Search by blogger or category"
+          placeholder="Search by blogger or title"
         />
         <button type="submit" className="p-2 bg-blue-500 text-white rounded-r">
           Search
@@ -39,12 +46,10 @@ const SearchBar = () => {
       </form>
       <select
         value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        onChange={handleCategoryChange}
         className="p-2 border"
       >
-        <option value="" disabled>
-          Filter by category
-        </option>
+        <option value="All">All</option>
         {categories.map((category) => (
           <option key={category} value={category}>
             {category}
