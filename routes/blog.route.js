@@ -10,6 +10,7 @@ import {
   getTrendingBlogs,
   getBlogById,
   searchBlogs,
+  likeBlog,
 } from "../controllers/blog.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -23,6 +24,7 @@ router.get("/", getAllBlogs);
 router.get("/recent", getRecentBlogs);
 router.get("/trending", getTrendingBlogs);
 router.get("/search", searchBlogs);
+router.post("/like/:id", verifyJWT, likeBlog);
 router.get("/:id", getBlogById);
 
 router.get("/category/:category", getBlogsByCategory);

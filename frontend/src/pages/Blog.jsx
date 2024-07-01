@@ -36,7 +36,9 @@ const Blog = () => {
             className="min-w-[80%] max-h-[400px] mx-auto object-cover"
             alt=""
           />
-          <p className="max-w-[80%] mx-auto p-4">{blog.content}</p>
+          <pre className="max-w-[80%] mx-auto p-4 whitespace-pre-wrap break-words">
+            {blog.content}
+          </pre>
           {/* Display other blog details */}
         </div>
       ) : (

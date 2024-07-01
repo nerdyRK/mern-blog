@@ -136,3 +136,10 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ error: "Error updating profile" });
   }
 };
+
+export const verifyToken = async (req, res) => {
+  const userId = req.user.id;
+  const user = await User.findById(userId).select("-password");
+  console.log("user", user);
+  res.status(200).json({ message: "Token verified successfully", user: user });
+};

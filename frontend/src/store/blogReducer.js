@@ -63,6 +63,13 @@ const blogSlice = createSlice({
     setPage: (state, action) => {
       state.page = action.payload;
     },
+    updateLikes: (state, action) => {
+      const { blogId, likes } = action.payload;
+      const blog = state.blogs.find((b) => b._id === blogId);
+      if (blog) {
+        blog.likes = likes;
+      }
+    },
   },
 });
 
@@ -77,5 +84,6 @@ export const {
   editBlog,
   addBlog,
   setPage,
+  updateLikes,
 } = blogSlice.actions;
 export default blogSlice.reducer;

@@ -151,3 +151,23 @@ export const searchBlogs = async (req, res) => {
 
   res.status(200).json(blogs);
 };
+
+export const likeBlog = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    const userId = req.user.id;
+
+    if (blog.likes.includes(userId)) {
+      // Unlike
+      blog.likes.pull(userId);
+    } else {
+      // Like
+      blog.likes.push(userId);
+    }
+
+    await blog.save();
+    res.json({ likes: blog.likes.length });
+  } catch (error) {
+    res.status(500).json({ error: "Server Error" });
+  }
+};

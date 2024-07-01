@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateProfile } from "../store/authReducer";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 import defaultUserImage from "../assets/defaultUserImage.png";
 
 const Profile = () => {
@@ -13,6 +13,7 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [password, setPassword] = useState(""); // For updating password
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   useEffect(() => {
     if (user) {
@@ -28,16 +29,15 @@ const Profile = () => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    const updatedUser = { name, email, profileImage };
+    setIsLoading(true); // Start loading
 
-    // Update user profile on the server
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
     if (profileImage) formData.append("profileImage", profileImage);
 
     try {
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         "http://localhost:5000/auth/profile",
         formData,
         {
@@ -47,12 +47,13 @@ const Profile = () => {
         }
       );
 
-      // Dispatch the updateProfile action with the updated user data
       dispatch(updateProfile(response.data));
       setEditMode(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-      // Handle the error, e.g., show an error message to the user
+      // Handle error
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -60,14 +61,19 @@ const Profile = () => {
     e.preventDefault();
 
     try {
+      setIsLoading(true); // Start loading
+
       await axios.put("http://localhost:5000/user/change-password", {
         password,
       });
+
       setPassword("");
       alert("Password updated successfully");
     } catch (error) {
       console.error("Error updating password:", error);
-      // Handle the error, e.g., show an error message to the user
+      // Handle error
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -112,7 +118,6 @@ const Profile = () => {
             className="w-full p-2 border border-black rounded"
             disabled={!editMode}
           />
-          {console.log(user)}
           <img
             src={profileImage || defaultUserImage}
             className="w-20 h-20 bg-slate-500 bg-opacity-40 mt-4"
@@ -123,8 +128,9 @@ const Profile = () => {
           <button
             type="submit"
             className="w-full p-2 bg-blue-500 text-white rounded"
+            disabled={isLoading} // Disable button during loading
           >
-            Save Changes
+            {isLoading ? "Updating..." : "Save Changes"}
           </button>
         )}
       </form>
@@ -144,8 +150,9 @@ const Profile = () => {
           <button
             type="submit"
             className="w-full p-2 bg-red-500 text-white rounded"
+            disabled={isLoading} // Disable button during loading
           >
-            Change Password
+            {isLoading ? "Updating..." : "Change Password"}
           </button>
         </form>
       )}

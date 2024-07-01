@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { addBlog } from "../store/blogReducer";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import defaultUserImage from "../assets/defaultUserImage.png";
+import axiosInstance from "../services/axiosInstance";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
-
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -25,26 +30,37 @@ const CreateBlog = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/blog",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axiosInstance.post("/blog", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       const newBlog = response.data;
-      // console.log(newBlog);
-      // Dispatch the addBlog action with the new blog data from the server
       dispatch(addBlog(newBlog));
       setTitle("");
       setContent("");
       setCategory("");
       setImage(null);
+      toast.success("Blog created successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
       console.error("Error creating blog:", error);
-      // Handle the error, e.g., show an error message to the user
+      toast.error("Failed to create blog. Please try again later.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
@@ -109,6 +125,7 @@ const CreateBlog = () => {
             className="w-full p-2 border border-black rounded"
           />
         </div>
+        <ToastContainer />
         <button
           type="submit"
           className="w-full p-2 bg-blue-500 text-white rounded"
