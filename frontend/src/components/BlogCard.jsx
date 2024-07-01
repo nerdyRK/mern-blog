@@ -12,7 +12,7 @@ const BlogCard = ({ blog }) => {
   );
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const [liked, setLiked] = useState(blog.likes.includes(user._id));
+  const [liked, setLiked] = useState(blog.likes.includes(user?._id));
   // console.log(liked);
   const [likes, setLikes] = useState(blog.likes.length);
 

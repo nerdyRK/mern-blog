@@ -14,7 +14,6 @@ const App = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        console.log("verifying token...");
         const response = await fetch(
           "http://localhost:5000/auth/verify-token",
           {
@@ -22,10 +21,15 @@ const App = () => {
             credentials: "include",
           }
         );
+        console.log("verifying token...");
         const data = await response.json();
-        // console.log("Token verification response with fetch:", data.user);
+        if (!data.user) {
+          return;
+        }
+
         dispatch(login(data.user));
       } catch (error) {
+        console.log(error);
         dispatch(logout());
       }
     };
