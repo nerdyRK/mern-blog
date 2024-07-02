@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authReducer";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 
 const LoginForm = () => {
   axios.defaults.withCredentials = true;
@@ -13,6 +14,7 @@ const LoginForm = () => {
   const [photo, setPhoto] = useState(null);
   const [photoError, setPhotoError] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,16 +64,6 @@ const LoginForm = () => {
         });
       }
 
-      {
-        // console.log(response);
-        // const userData = {
-        //   name: response.data.name,
-        //   email: response.data.email,
-        //   photo: response.data.photo,
-        // };
-        // console.log(r);
-        // Handle successful login/signup
-      }
       dispatch(login(response.data)); // Dispatch login action to update Redux store
 
       navigate("/dashboard"); // Redirect to dashboard after successful login/signup
@@ -110,10 +102,10 @@ const LoginForm = () => {
           required
         />
       </div>
-      <div className="mb-4">
+      <div className="mb-4 relative">
         <label className="block mb-2 text-sm font-bold">Password</label>
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={password}
           minLength="8"
           onChange={(e) => setPassword(e.target.value)}
@@ -121,6 +113,12 @@ const LoginForm = () => {
           autoComplete="current-password"
           required
         />
+        <span
+          className="absolute right-3 top-10 cursor-pointer"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {!showPassword ? <IoEyeOff /> : <IoEye />}
+        </span>
       </div>
       {isSignUp && (
         <div className="mb-4">

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateProfile } from "../store/authReducer";
 import axiosInstance from "../services/axiosInstance";
 import defaultUserImage from "../assets/defaultUserImage.png";
+import { IoEyeOff, IoEye } from "react-icons/io5";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -12,8 +13,11 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  const [password, setPassword] = useState(""); // For updating password
+  const [password, setPassword] = useState(""); // For updating new password
+  const [oldPassword, setOldPassword] = useState(""); // For old password check
   const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [showOldPassword, setShowOldPassword] = useState(false); // State to show/hide old password
+  const [showPassword, setShowPassword] = useState(false); // State to show/hide new password
 
   useEffect(() => {
     if (user) {
@@ -63,11 +67,13 @@ const Profile = () => {
     try {
       setIsLoading(true); // Start loading
 
-      await axios.put("http://localhost:5000/user/change-password", {
-        password,
+      await axiosInstance.put("http://localhost:5000/auth/change-password", {
+        oldPassword,
+        newPassword: password,
       });
 
       setPassword("");
+      setOldPassword("");
       alert("Password updated successfully");
     } catch (error) {
       console.error("Error updating password:", error);
@@ -136,16 +142,38 @@ const Profile = () => {
       </form>
       {editMode && (
         <form onSubmit={handlePasswordUpdate}>
-          <div className="mb-4 mt-6">
+          <div className="mb-4 mt-6 relative">
+            <label className="block mb-2 text-sm font-bold">Old Password</label>
+            <input
+              type={showOldPassword ? "text" : "password"}
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              className="w-full p-2 border border-black rounded"
+              required
+            />
+            <span
+              className="absolute right-3 top-10 cursor-pointer"
+              onClick={() => setShowOldPassword(!showOldPassword)}
+            >
+              {!showOldPassword ? <IoEyeOff /> : <IoEye />}
+            </span>
+          </div>
+          <div className="mb-4 relative">
             <label className="block mb-2 text-sm font-bold">New Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border border-black rounded"
               minLength="8"
               required
             />
+            <span
+              className="absolute right-3 top-10 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {!showPassword ? <IoEyeOff /> : <IoEye />}
+            </span>
           </div>
           <button
             type="submit"

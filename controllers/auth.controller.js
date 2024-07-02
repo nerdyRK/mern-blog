@@ -40,7 +40,7 @@ export const signup = async (req, res) => {
     const token = generateToken(user);
     res.cookie("token", token, {
       httpOnly: true,
-      // secure: true, // use secure cookies in production
+      secure: true,
       // sameSite: "strict",
       maxAge: 1 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -80,7 +80,7 @@ export const login = async (req, res) => {
     });
     res.cookie("token", token, {
       httpOnly: true,
-      // secure: true,
+      secure: true,
       // sameSite: "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -142,4 +142,21 @@ export const verifyToken = async (req, res) => {
   const user = await User.findById(userId).select("-password");
   console.log("user", user);
   res.status(200).json({ message: "Token verified successfully", user: user });
+};
+
+export const changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+  if (!isMatch) {
+    return res.status(400).json({ message: "Old password is incorrect" });
+  }
+  user.password = newPassword;
+  await user.save();
+  res.status(200).json({ message: "Password changed successfully" });
 };

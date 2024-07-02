@@ -11,6 +11,9 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
+    if (!isLoggedIn) {
+      return;
+    }
     try {
       // Make a request to backend logout route
       await axiosInstance.post("http://localhost:5000/auth/logout");

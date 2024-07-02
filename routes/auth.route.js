@@ -7,6 +7,7 @@ import {
   logout,
   updateProfile,
   verifyToken,
+  changePassword,
 } from "../controllers/auth.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -18,5 +19,6 @@ router.post("/logout", verifyJWT, logout);
 router.get("/verify-token", verifyJWT, verifyToken);
 
 router.put("/profile", verifyJWT, upload.single("profileImage"), updateProfile);
+router.put("/change-password", verifyJWT, changePassword);
 
 export default router;
