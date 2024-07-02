@@ -56,16 +56,21 @@ const BlogCard = ({ blog }) => {
   };
 
   return (
-    <div className="max-w-[300px] rounded-lg md:min-w-[300px] min-w-[250px] shadow-lg border-black border">
+    <div className="max-w-[300px] rounded-lg md:min-w-[300px] min-w-[270px] shadow-lg border-black border">
       <img
-        className="w-full rounded-tl-lg rounded-tr-lg h-40 object-cover bg-slate-500 bg-opacity-40"
+        className="w-full min-w-[300px] rounded-tl-lg rounded-tr-lg h-40 object-cover bg-slate-500 bg-opacity-40"
         src={blog.blogImage}
         alt=""
       />
       <div className="p-2">
-        <h1 className="text-2xl font-bold pb-2">
-          {blog?.title[0].toUpperCase() + blog?.title.slice(1)}
-        </h1>
+        <div className="flex justify-between">
+          <Link to={`/blog/${blog._id}`}>
+            <h1 className="text-xl font-bold pb-2">
+              {blog?.title[0].toUpperCase() + blog?.title.slice(1)}
+            </h1>
+          </Link>
+          <p>✍️{blog?.author?.name || "Anonymous"}</p>
+        </div>
         <Link to={`/blog/${blog._id}`}>
           <p className="truncate">{blog?.content}</p>
         </Link>

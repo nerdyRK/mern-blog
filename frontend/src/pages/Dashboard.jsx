@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 const Dashboard = () => {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  // console.log("Dashboard", isLoggedIn);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -14,12 +15,12 @@ const Dashboard = () => {
   }, [isLoggedIn, navigate]);
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex flex-col sm:flex-row">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white flex-shrink-0">
-        <div className="p-6">
-          <h2 className="text-2xl font-semibold">Dashboard</h2>
-          <nav className="mt-10">
+      <aside className="sm:max-w-64 max-w-full bg-gray-800 text-white flex-shrink-0">
+        <div className="px-4 py-6 sm:mt-10">
+          {/* <h2 className="text-2xl font-semibold">Dashboard</h2> */}
+          <nav className="flex sm:flex-col sm:min-h-screen">
             <Link
               to="/dashboard/profile"
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"

@@ -56,6 +56,7 @@ export const getBlogsByCategory = async (req, res) => {
 // Get blogs by user
 export const getBlogsByUser = async (req, res) => {
   const userId = req.params.userId;
+  // console.log("userId", userId);
   const blogs = await Blog.find({ author: userId }).populate("author", "name");
   const blogsWithLikeCount = blogs.map((blog) => ({
     ...blog.toObject(),
@@ -74,11 +75,12 @@ export const updateBlog = async (req, res) => {
   if (req.file) {
     blogImage = await uploadToCloudinary(req.file.path);
   }
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    blogId,
-    { title, content, category, blogImage: blogImage },
-    { new: true }
-  );
+  let updatedData = { title, content, category };
+  if (blogImage) updatedData.blogImage = blogImage;
+  const updatedBlog = await Blog.findByIdAndUpdate(blogId, updatedData, {
+    new: true,
+    runValidators: true,
+  });
 
   const blogWithLikeCount = {
     ...updatedBlog.toObject(),
@@ -101,6 +103,7 @@ export const deleteBlog = async (req, res) => {
 export const getRecentBlogs = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const recentBlogs = await Blog.find()
+    .populate("author", "name")
     .sort({ createdAt: -1 })
     .limit(limit)
     .exec();
@@ -110,6 +113,7 @@ export const getRecentBlogs = async (req, res) => {
 export const getTrendingBlogs = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const trendingBlogs = await Blog.find()
+    .populate("author", "name")
     .sort({ likes: -1 })
     .limit(limit)
     .exec();
@@ -118,7 +122,7 @@ export const getTrendingBlogs = async (req, res) => {
 
 export const getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    const blog = await Blog.findById(req.params.id).populate("author", "name");
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
