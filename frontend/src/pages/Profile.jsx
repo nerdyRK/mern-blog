@@ -4,6 +4,8 @@ import { updateProfile } from "../store/authReducer";
 import axiosInstance from "../services/axiosInstance";
 import defaultUserImage from "../assets/defaultUserImage.png";
 import { IoEyeOff, IoEye } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -15,7 +17,8 @@ const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [password, setPassword] = useState(""); // For updating new password
   const [oldPassword, setOldPassword] = useState(""); // For old password check
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isProfileLoading, setIsProfileLoading] = useState(false); // Loading state
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false); // Loading state
   const [showOldPassword, setShowOldPassword] = useState(false); // State to show/hide old password
   const [showPassword, setShowPassword] = useState(false); // State to show/hide new password
 
@@ -33,7 +36,7 @@ const Profile = () => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Start loading
+    setIsProfileLoading(true); // Start loading
 
     const formData = new FormData();
     formData.append("name", name);
@@ -53,11 +56,12 @@ const Profile = () => {
 
       dispatch(updateProfile(response.data));
       setEditMode(false);
+      toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating profile:", error);
-      // Handle error
+      toast.error("Failed to update profile");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsProfileLoading(false); // Stop loading
     }
   };
 
@@ -65,7 +69,7 @@ const Profile = () => {
     e.preventDefault();
 
     try {
-      setIsLoading(true); // Start loading
+      setIsPasswordLoading(true); // Start loading
 
       await axiosInstance.put("http://localhost:5000/auth/change-password", {
         oldPassword,
@@ -74,12 +78,12 @@ const Profile = () => {
 
       setPassword("");
       setOldPassword("");
-      alert("Password updated successfully");
+      toast.success("Password updated successfully");
     } catch (error) {
       console.error("Error updating password:", error);
-      // Handle error
+      toast.error("Old Password is incorrect");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsPasswordLoading(false); // Stop loading
     }
   };
 
@@ -134,9 +138,9 @@ const Profile = () => {
           <button
             type="submit"
             className="w-full p-2 bg-blue-500 text-white rounded"
-            disabled={isLoading} // Disable button during loading
+            disabled={isProfileLoading} // Disable button during loading
           >
-            {isLoading ? "Updating..." : "Save Changes"}
+            {isProfileLoading ? "Updating..." : "Save Changes"}
           </button>
         )}
       </form>
@@ -178,12 +182,13 @@ const Profile = () => {
           <button
             type="submit"
             className="w-full p-2 bg-red-500 text-white rounded"
-            disabled={isLoading} // Disable button during loading
+            disabled={isPasswordLoading} // Disable button during loading
           >
-            {isLoading ? "Updating..." : "Change Password"}
+            {isPasswordLoading ? "Updating..." : "Change Password"}
           </button>
         </form>
       )}
+      <ToastContainer />
     </div>
   );
 };

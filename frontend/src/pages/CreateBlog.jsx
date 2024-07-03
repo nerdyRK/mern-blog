@@ -12,6 +12,7 @@ const CreateBlog = () => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
@@ -21,6 +22,8 @@ const CreateBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
@@ -61,6 +64,8 @@ const CreateBlog = () => {
         draggable: true,
         progress: undefined,
       });
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -129,8 +134,9 @@ const CreateBlog = () => {
         <button
           type="submit"
           className="w-full p-2 bg-blue-500 text-white rounded"
+          disabled={isLoading} // Disable button during loading
         >
-          Create Blog
+          {isLoading ? "Creating..." : "Create Blog"}
         </button>
       </form>
     </div>

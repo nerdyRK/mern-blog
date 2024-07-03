@@ -44,9 +44,9 @@ const Home = () => {
 
   return (
     <div className="py-10">
-      <Recommended data={recommendedBlogs.slice(0, 3)} />
-      <TrendingBlogs data={trendingBlogs.slice(0, 3)} />
-      <RecentBlogs data={recentBlogs.slice(0, 3)} />
+      <RecentBlogs data={recentBlogs.slice(0, 4)} />
+      <Recommended data={recommendedBlogs.slice(0, 4)} />
+      <TrendingBlogs data={trendingBlogs.slice(0, 4)} />
     </div>
   );
 };

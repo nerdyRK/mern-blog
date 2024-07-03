@@ -58,7 +58,7 @@ const BlogCard = ({ blog }) => {
   return (
     <div className="max-w-[300px] rounded-lg md:min-w-[300px] min-w-[270px] shadow-lg border-black border">
       <img
-        className="w-full min-w-[300px] rounded-tl-lg rounded-tr-lg h-40 object-cover bg-slate-500 bg-opacity-40"
+        className="w-full min-w-[300px] rounded-tl-lg rounded-tr-lg h-40 object-cover object-top bg-slate-500 bg-opacity-40"
         src={blog.blogImage}
         alt=""
       />

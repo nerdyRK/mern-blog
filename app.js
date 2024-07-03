@@ -38,9 +38,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 //   res.sendFile(path.resolve(__dirname, "./frontend/dist", "index.html"));
 // });
 
-// Database Connection
-connectDB();
-
 // Routes
 // app.get("/", (req, res) => {
 //   res.send("API is running...");
@@ -52,7 +49,9 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Database Connection
+connectDB().then(() =>
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  })
+);
