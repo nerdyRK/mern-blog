@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addBlog } from "../store/blogReducer";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import defaultUserImage from "../assets/defaultUserImage.png";
 import axiosInstance from "../services/axiosInstance";
 
 const CreateBlog = () => {

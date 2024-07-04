@@ -4,7 +4,8 @@ import { login } from "../store/authReducer";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const LoginForm = () => {
   axios.defaults.withCredentials = true;
 
@@ -15,6 +16,7 @@ const LoginForm = () => {
   const [photoError, setPhotoError] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/dashboard");
+      navigate("/dashboard/profile");
     }
   }, [isLoggedIn, navigate]);
 
@@ -40,6 +42,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       let response;
       if (isSignUp) {
@@ -57,100 +60,107 @@ const LoginForm = () => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
+        toast.success("Sign-up successful!");
       } else {
         response = await axios.post("http://localhost:5000/auth/login", {
           email,
           password,
         });
+        toast.success("Login successful!");
       }
 
       dispatch(login(response.data)); // Dispatch login action to update Redux store
-
-      navigate("/dashboard"); // Redirect to dashboard after successful login/signup
+      navigate("/dashboard/profile"); // Redirect to dashboard after successful login/signup
     } catch (error) {
-      alert(error.response.data.message);
+      toast.error(error.response.data.message || "Error occurred!");
       console.error("Error:", error.response.data.message);
       // Handle error (e.g., show error message to user)
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto py-10 my-20 px-8 border border-black shadow-lg"
-    >
-      {isSignUp && (
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-md mx-auto py-10 my-20 px-8 border border-black shadow-lg"
+      >
+        {isSignUp && (
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold">Full Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border border-black rounded"
+              required
+            />
+          </div>
+        )}
         <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">Full Name</label>
+          <label className="block mb-2 text-sm font-bold">Email/Username</label>
           <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border border-black rounded"
+            autoComplete="username"
             required
           />
         </div>
-      )}
-      <div className="mb-4">
-        <label className="block mb-2 text-sm font-bold">Email/Username</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border border-black rounded"
-          autoComplete="username"
-          required
-        />
-      </div>
-      <div className="mb-4 relative">
-        <label className="block mb-2 text-sm font-bold">Password</label>
-        <input
-          type={showPassword ? "text" : "password"}
-          value={password}
-          minLength="8"
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border border-black rounded"
-          autoComplete="current-password"
-          required
-        />
-        <span
-          className="absolute right-3 top-10 cursor-pointer"
-          onClick={() => setShowPassword(!showPassword)}
-        >
-          {!showPassword ? <IoEyeOff /> : <IoEye />}
-        </span>
-      </div>
-      {isSignUp && (
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">
-            Profile Photo (optional)
-          </label>
+        <div className="mb-4 relative">
+          <label className="block mb-2 text-sm font-bold">Password</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
+            type={showPassword ? "text" : "password"}
+            value={password}
+            minLength="8"
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border border-black rounded"
+            autoComplete="current-password"
+            required
           />
-          {photoError && (
-            <p className="text-red-500 text-sm mt-1">{photoError}</p>
-          )}
+          <span
+            className="absolute right-3 top-10 cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {!showPassword ? <IoEyeOff /> : <IoEye />}
+          </span>
         </div>
-      )}
-      <button
-        type="submit"
-        className="w-full p-2 bg-blue-500 hover:bg-blue-700 text-white rounded"
-      >
-        {isSignUp ? "Sign Up" : "Login"}
-      </button>
-      <p
-        className="cursor-pointer hover:text-blue-700 hover:font-semibold text-center mt-4"
-        onClick={() => setIsSignUp(!isSignUp)}
-      >
-        {isSignUp
-          ? "Already have an account? Login"
-          : "Don't have an account? Sign Up"}
-      </p>
-    </form>
+        {isSignUp && (
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold">
+              Profile Photo (optional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="w-full p-2 border border-black rounded"
+            />
+            {photoError && (
+              <p className="text-red-500 text-sm mt-1">{photoError}</p>
+            )}
+          </div>
+        )}
+        <button
+          type="submit"
+          className="w-full p-2 bg-blue-500 hover:bg-blue-700 text-white rounded"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : isSignUp ? "Sign Up" : "Login"}
+        </button>
+        <p
+          className="cursor-pointer hover:text-blue-700 hover:font-semibold text-center mt-4"
+          onClick={() => setIsSignUp(!isSignUp)}
+        >
+          {isSignUp
+            ? "Already have an account? Login"
+            : "Don't have an account? Sign Up"}
+        </p>
+      </form>
+      <ToastContainer />
+    </>
   );
 };
 

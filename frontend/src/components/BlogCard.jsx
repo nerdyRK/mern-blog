@@ -3,8 +3,11 @@ import { FaThumbsUp, FaComment, FaBookmark } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { updateLikes } from "../store/blogReducer";
+import axiosInstance from "../services/axiosInstance";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import LazyImage from "../services/LazyImage";
 
 const BlogCard = ({ blog }) => {
   const [creationTime, setCreationTime] = useState(
@@ -34,12 +37,20 @@ const BlogCard = ({ blog }) => {
   const handleLike = async () => {
     if (user) {
       if (!user.name) {
-        alert("You must be logged in to like a blog");
+        toast.error("First Login then Like.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         return;
       }
       try {
-        const response = await axios.post(
-          `http://localhost:5000/blog/like/${blog._id}`,
+        const response = await axiosInstance.post(
+          `/blog/like/${blog._id}`,
           {},
           { withCredentials: true }
         );
@@ -56,11 +67,13 @@ const BlogCard = ({ blog }) => {
   };
 
   return (
-    <div className="max-w-[300px] rounded-lg md:min-w-[300px] min-w-[270px] shadow-lg border-black border">
-      <img
-        className="w-full min-w-[300px] rounded-tl-lg rounded-tr-lg h-40 object-cover object-top bg-slate-500 bg-opacity-40"
+    <div className="max-w-[300px] overflow-hidden rounded-lg md:min-w-[300px] min-w-[270px] shadow-lg border-black border">
+      <ToastContainer />
+
+      <LazyImage
         src={blog.blogImage}
-        alt=""
+        alt={blog.title}
+        className="w-full max-w-[300px] border-b border-black rounded-tl-lg rounded-tr-lg h-40 object-cover object-top bg-slate-500 bg-opacity-40"
       />
       <div className="p-2">
         <div className="flex justify-between">

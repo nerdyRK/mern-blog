@@ -1,37 +1,52 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import categories from "../utils/constants";
-import { filterByCategory } from "../store/blogReducer"; // Import the filter action
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSearch = (e) => {
     e.preventDefault();
     const searchQuery = query.trim();
     let searchURL = "/search";
+
     if (searchQuery) {
-      searchURL += `?q=${searchQuery}`;
+      searchURL += `?q=${encodeURIComponent(searchQuery)}`;
     }
     if (category && category !== "All") {
-      searchURL += `${searchQuery ? "&" : "?"}category=${category}`;
+      searchURL += `${searchQuery ? "&" : "?"}category=${encodeURIComponent(
+        category
+      )}`;
     }
-    if (searchQuery || category !== "All") {
-      navigate(searchURL);
-    }
+
+    // Only navigate if there's a search query or the category is not "All"
+
+    navigate(searchURL);
   };
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
-    dispatch(filterByCategory(e.target.value)); // Filter by category on client side
   };
 
   return (
     <div className="flex flex-col sm:flex-row justify-end py-4 gap-2 sm:gap-8 sm:px-10 shadow-lg items-center">
+      <select
+        value={category}
+        onChange={handleCategoryChange}
+        className="p-2 border"
+      >
+        <option value={""} disabled>
+          Choose a category
+        </option>
+        <option value="All">All</option>
+        {categories.map((category) => (
+          <option key={category} value={category}>
+            {category}
+          </option>
+        ))}
+      </select>
       <form onSubmit={handleSearch} className="flex">
         <input
           type="text"
@@ -44,18 +59,6 @@ const SearchBar = () => {
           Search
         </button>
       </form>
-      <select
-        value={category}
-        onChange={handleCategoryChange}
-        className="p-2 border"
-      >
-        <option value="All">All</option>
-        {categories.map((category) => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
     </div>
   );
 };

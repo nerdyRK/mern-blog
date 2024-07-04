@@ -8,6 +8,8 @@ const initialState = {
   page: 1,
   totalPages: 1,
   totalBlogs: 0,
+  searchResults: [],
+  loading: false,
 };
 
 const blogSlice = createSlice({
@@ -22,21 +24,24 @@ const blogSlice = createSlice({
       state.totalBlogs = totalBlogs;
     },
     setSearchResults: (state, action) => {
-      // Add this
-      state.searchResults = action.payload;
-      state.filteredResults = action.payload;
+      const { blogs, page, totalPages } = action.payload;
+      const allBlogs = page === 1 ? blogs : [...state.searchResults, ...blogs];
+      state.searchResults = Array.from(
+        new Set(allBlogs.map((blog) => blog._id))
+      ).map((id) => allBlogs.find((blog) => blog._id === id));
+      state.page = page;
+      state.totalPages = totalPages;
     },
-    filterByCategory: (state, action) => {
-      // Add this
-      // console.log(action.payload);
-      if (action.payload === "All") {
-        state.filteredResults = state.searchResults;
-      } else {
-        state.filteredResults = state.searchResults.filter(
-          (blog) => blog.category === action.payload.toLowerCase()
-        );
-      }
+    setLoading: (state, action) => {
+      state.loading = action.payload;
     },
+    clearSearchResults: (state) => {
+      state.searchResults = [];
+      state.page = 1;
+      state.totalPages = 1;
+      console.log("search results cleared");
+    },
+
     setTrendingBlogs: (state, action) => {
       state.trendingBlogs = action.payload;
     },
@@ -83,6 +88,8 @@ export const {
   deleteBlog,
   editBlog,
   addBlog,
+  setLoading,
+  clearSearchResults,
   setPage,
   updateLikes,
 } = blogSlice.actions;

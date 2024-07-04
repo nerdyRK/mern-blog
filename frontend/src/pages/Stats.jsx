@@ -10,10 +10,9 @@ const Stats = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editBlogData, setEditBlogData] = useState(null);
+  const [editBlogData, setEditBlogData] = useState({});
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userId = useSelector((state) => state.auth.user._id);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -34,7 +33,7 @@ const Stats = () => {
   const handleDelete = async (id) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "You won't be able to recover your blog!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
@@ -68,7 +67,7 @@ const Stats = () => {
         }
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire("Cancelled", "Your file is safe :)", "error");
+        Swal.fire("Cancelled", "Your Blog is safe :)", "error");
       }
     });
   };

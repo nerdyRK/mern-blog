@@ -133,17 +133,25 @@ export const getBlogById = async (req, res) => {
 };
 
 export const searchBlogs = async (req, res) => {
-  const { q, category } = req.query;
+  let { q, category, page = 1, limit = 10 } = req.query;
+  page = parseInt(page);
+  limit = parseInt(limit);
+  console.log(
+    "q",
+    q,
+    "category",
+    category,
+    "page",
+    typeof page,
+    "limit",
+    typeof limit
+  );
   let filter = {};
 
   if (q) {
-    const regex = new RegExp(q, "i"); // Case-insensitive search
-
-    // Find authors matching the query
+    const regex = new RegExp(q, "i");
     const authors = await User.find({ name: regex });
     const authorIds = authors.map((author) => author._id);
-
-    // Filter blogs by title or author ID
     filter.$or = [{ title: regex }, { author: { $in: authorIds } }];
   }
 
@@ -151,9 +159,23 @@ export const searchBlogs = async (req, res) => {
     filter.category = category.toLowerCase();
   }
 
-  const blogs = await Blog.find(filter).populate("author", "name");
-
-  res.status(200).json(blogs);
+  try {
+    const blogs = await Blog.find(filter)
+      .populate("author", "name")
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+    // console.log("blogs", blogs);
+    const totalBlogs = await Blog.countDocuments(filter);
+    console.log("totalBlogs", totalBlogs);
+    res.status(200).json({
+      blogs,
+      totalBlogs,
+      page,
+      totalPages: Math.ceil(totalBlogs / limit),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching blogs", error });
+  }
 };
 
 export const likeBlog = async (req, res) => {
