@@ -2,6 +2,21 @@ import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 import Comment from "../models/comment.model.js";
 import uploadToCloudinary from "../utils/cloudinary.js";
+import { v2 as cloudinary } from "cloudinary";
+
+if (
+  !process.env.CLOUDINARY_CLOUD_NAME ||
+  !process.env.CLOUDINARY_API_KEY ||
+  !process.env.CLOUDINARY_API_SECRET
+) {
+  throw new Error("Missing Cloudinary credentials");
+}
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Create a new blog
 export const createBlog = async (req, res) => {
@@ -93,15 +108,30 @@ export const updateBlog = async (req, res) => {
 // Delete a blog
 export const deleteBlog = async (req, res) => {
   const blogId = req.params.id;
-  const blog = await Blog.findByIdAndDelete(blogId);
-  // Remove blog from user's blog list
+
+  // Find the blog to get the image URL
+  const blog = await Blog.findById(blogId);
+  if (!blog) {
+    return res.status(404).json({ message: "Blog not found" });
+  }
+
+  // Extract the public ID of the image from the Cloudinary URL
+  const imagePublicId = blog.blogImage.split("/").pop().split(".")[0];
+
+  // Delete the image from Cloudinary
+  await cloudinary.uploader.destroy(imagePublicId);
+
+  // Delete the blog from the database
+  await Blog.findByIdAndDelete(blogId);
+
+  // Remove the blog from the user's blog list
   await User.findByIdAndUpdate(blog.author, { $pull: { blogs: blogId } });
 
-  res.status(200).json({ message: "Blog deleted" });
+  res.status(200).json({ message: "Blog and associated image deleted" });
 };
 
 export const getRecentBlogs = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 20;
   const recentBlogs = await Blog.find()
     .populate("author", "name")
     .sort({ createdAt: -1 })
@@ -111,7 +141,7 @@ export const getRecentBlogs = async (req, res) => {
 };
 
 export const getTrendingBlogs = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 20;
   const trendingBlogs = await Blog.find()
     .populate("author", "name")
     .sort({ likes: -1 })

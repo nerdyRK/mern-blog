@@ -39,7 +39,7 @@ const blogSlice = createSlice({
       state.searchResults = [];
       state.page = 1;
       state.totalPages = 1;
-      console.log("search results cleared");
+      // console.log("search results cleared");
     },
 
     setTrendingBlogs: (state, action) => {
