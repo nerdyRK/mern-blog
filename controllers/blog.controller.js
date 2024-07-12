@@ -166,16 +166,6 @@ export const searchBlogs = async (req, res) => {
   let { q, category, page = 1, limit = 10 } = req.query;
   page = parseInt(page);
   limit = parseInt(limit);
-  console.log(
-    "q",
-    q,
-    "category",
-    category,
-    "page",
-    typeof page,
-    "limit",
-    typeof limit
-  );
   let filter = {};
 
   if (q) {

@@ -1,27 +1,10 @@
-import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import defaultBlogImage from "../assets/defaultBlogImage.avif";
+import useIdBlog from "../utils/useIdBlog";
 
 const Blog = () => {
   const { id } = useParams();
-  const [blog, setBlog] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/blog/${id}`);
-        setBlog(response.data);
-      } catch (error) {
-        setError("Error fetching blog");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlog();
-  }, [id]);
+  const { blog, loading, error } = useIdBlog(id);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -39,7 +22,6 @@ const Blog = () => {
           <pre className="max-w-[80%] mx-auto p-4 whitespace-pre-wrap break-words">
             {blog.content}
           </pre>
-          {/* Display other blog details */}
         </div>
       ) : (
         <p>Blog not found</p>

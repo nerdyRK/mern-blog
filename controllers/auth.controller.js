@@ -120,7 +120,6 @@ export const updateProfile = async (req, res) => {
     if (req.file) {
       const localFilePath = req.file.path;
       profileImage = await uploadToCloudinary(localFilePath);
-      // console.log(profileImage);
     }
 
     const updatedData = { name, email };
