@@ -6,6 +6,7 @@ import axios from "axios";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FormInput from "../components/FormInput";
 const LoginForm = () => {
   axios.defaults.withCredentials = true;
 
@@ -66,15 +67,16 @@ const LoginForm = () => {
           email,
           password,
         });
-        toast.success("Login successful!");
       }
+      toast.success("success!");
 
       dispatch(login(response.data)); // Dispatch login action to update Redux store
-      navigate("/dashboard/profile"); // Redirect to dashboard after successful login/signup
+      setTimeout(() => {
+        navigate("/dashboard/profile"); // Redirect to dashboard after successful login/signup
+      }, 2000);
     } catch (error) {
       toast.error(error.response.data.message || "Error occurred!");
       console.error("Error:", error.response.data.message);
-      // Handle error (e.g., show error message to user)
     } finally {
       setLoading(false);
     }
@@ -87,28 +89,21 @@ const LoginForm = () => {
         className="max-w-md mx-auto py-10 my-20 px-8 border border-black shadow-lg"
       >
         {isSignUp && (
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold">Full Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border border-black rounded"
-              required
-            />
-          </div>
-        )}
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">Email/Username</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-black rounded"
-            autoComplete="username"
+          <FormInput
+            label="Full Name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
-        </div>
+        )}
+        <FormInput
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <div className="mb-4 relative">
           <label className="block mb-2 text-sm font-bold">Password</label>
           <input

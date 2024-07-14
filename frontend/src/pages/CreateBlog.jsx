@@ -1,18 +1,20 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { addBlog } from "../store/blogReducer";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import axiosInstance from "../services/axiosInstance";
+import { showToastError, showToastSuccess } from "../utils/toastUtil";
+import categories from "../utils/constants";
+import FormInput from "../components/FormInput";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef(null);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -20,8 +22,7 @@ const CreateBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Start loading
-
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
@@ -29,7 +30,6 @@ const CreateBlog = () => {
     if (image) {
       formData.append("blogImage", image);
     }
-
     try {
       const response = await axiosInstance.post("/blog", formData, {
         headers: {
@@ -41,29 +41,16 @@ const CreateBlog = () => {
       setTitle("");
       setContent("");
       setCategory("");
-      setImage(null);
-      toast.success("Blog created successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      setImage(null); // Reset the image state
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null; // This resets the file input element
+      }
+      showToastSuccess("Blog created successfully!");
     } catch (error) {
       console.error("Error creating blog:", error);
-      toast.error("Failed to create blog. Please try again later.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      showToastError("Failed to create blog.");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
@@ -71,16 +58,13 @@ const CreateBlog = () => {
     <div className="bg-white shadow-md rounded p-6">
       <h2 className="text-xl font-semibold mb-4">Create a New Blog</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border border-black rounded"
-            required
-          />
-        </div>
+        <FormInput
+          label="Title"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
         <div className="mb-4">
           <label className="block mb-2 text-sm font-bold">Content</label>
           <textarea
@@ -102,20 +86,11 @@ const CreateBlog = () => {
             <option value="" disabled>
               Select a category
             </option>
-            <option value="technology">Technology</option>
-            <option value="health & wellness">Health & Wellness</option>
-            <option value="lifestyle">Lifestyle</option>
-            <option value="business & finance">Business & Finance</option>
-            <option value="food & drink">Food & Drink</option>
-            <option value="education">Education</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="arts & culture">Arts & Culture</option>
-            <option value="parenting & family">Parenting & Family</option>
-            <option value="sports">Sports</option>
-            <option value="science & nature">Science & Nature</option>
-            <option value="politics & society">Politics & Society</option>
-            <option value="gaming">Gaming</option>
-            <option value="travel">Travel</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
         </div>
         <div className="mb-4">
@@ -124,6 +99,7 @@ const CreateBlog = () => {
           </label>
           <input
             type="file"
+            ref={fileInputRef}
             onChange={handleImageChange}
             className="w-full p-2 border border-black rounded"
           />

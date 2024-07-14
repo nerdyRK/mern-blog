@@ -6,6 +6,8 @@ import defaultUserImage from "../assets/defaultUserImage.png";
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FormInput from "../components/FormInput";
+import { showToastError, showToastSuccess } from "../utils/toastUtil";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -19,8 +21,8 @@ const Profile = () => {
   const [oldPassword, setOldPassword] = useState(""); // For old password check
   const [isProfileLoading, setIsProfileLoading] = useState(false); // Loading state
   const [isPasswordLoading, setIsPasswordLoading] = useState(false); // Loading state
-  const [showOldPassword, setShowOldPassword] = useState(false); // State to show/hide old password
-  const [showPassword, setShowPassword] = useState(false); // State to show/hide new password
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -31,7 +33,12 @@ const Profile = () => {
   }, [user]);
 
   const handlePhotoChange = (e) => {
-    setProfileImage(e.target.files[0]);
+    // Get the selected file
+    const file = e.target.files[0];
+    // Convert file to URL that can be displayed
+    const imageUrl = URL.createObjectURL(file);
+    // Set profileImage state to the selected file and imageUrl for display
+    setProfileImage({ file, imageUrl });
   };
 
   const handleProfileUpdate = async (e) => {
@@ -41,7 +48,7 @@ const Profile = () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
-    if (profileImage) formData.append("profileImage", profileImage);
+    if (profileImage) formData.append("profileImage", profileImage.file);
 
     try {
       const response = await axiosInstance.put(
@@ -67,21 +74,18 @@ const Profile = () => {
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-
     try {
-      setIsPasswordLoading(true); // Start loading
-
-      await axiosInstance.put("http://localhost:5000/auth/change-password", {
+      setIsPasswordLoading(true);
+      await axiosInstance.put("/auth/change-password", {
         oldPassword,
         newPassword: password,
       });
-
       setPassword("");
       setOldPassword("");
-      toast.success("Password updated successfully");
+      showToastSuccess("Password updated successfully");
     } catch (error) {
       console.error("Error updating password:", error);
-      toast.error("Old Password is incorrect");
+      showToastError("Old Password is incorrect");
     } finally {
       setIsPasswordLoading(false); // Stop loading
     }
@@ -97,30 +101,24 @@ const Profile = () => {
         {editMode ? "Cancel" : "Edit Profile"}
       </button>
       <form onSubmit={handleProfileUpdate}>
+        <FormInput
+          label="Name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          disabled={!editMode}
+        />
+        <FormInput
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={!editMode}
+        />
         <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border border-black rounded"
-            required
-            disabled={!editMode}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-black rounded"
-            required
-            disabled={!editMode}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">Photo</label>
+          <label className="block mb-2 text-sm font-bold">Profile Image</label>
           <input
             type="file"
             accept="image/*"
@@ -128,11 +126,14 @@ const Profile = () => {
             className="w-full p-2 border border-black rounded"
             disabled={!editMode}
           />
-          <img
-            src={profileImage || defaultUserImage}
-            className="w-20 h-20 bg-slate-500 bg-opacity-40 mt-4"
-            alt=""
-          />
+          {/* Display profile image */}
+          {profileImage && (
+            <img
+              src={profileImage.imageUrl || profileImage || defaultUserImage}
+              className="w-20 h-20 bg-slate-500 bg-opacity-40 mt-4"
+              alt="Profile"
+            />
+          )}
         </div>
         {editMode && (
           <button
@@ -144,6 +145,8 @@ const Profile = () => {
           </button>
         )}
       </form>
+
+      {/* Form for password changing */}
       {editMode && (
         <form onSubmit={handlePasswordUpdate}>
           <div className="mb-4 mt-6 relative">
